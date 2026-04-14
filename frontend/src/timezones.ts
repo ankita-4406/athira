@@ -8,6 +8,7 @@ const FALLBACK = [
   'Europe/London',
   'Europe/Paris',
   'Asia/Tokyo',
+  'Asia/Calcutta',
   'Asia/Kolkata',
   'Australia/Sydney',
 ]
@@ -24,8 +25,8 @@ export function listTimezones(): string[] {
   return FALLBACK
 }
 
-/** App default (India); IANA uses Asia/Kolkata (same zone as legacy Asia/Calcutta). */
-const APP_DEFAULT_TZ = 'Asia/Kolkata'
+/** App default (India); Asia/Calcutta is the legacy IANA name for UTC+5:30. */
+const APP_DEFAULT_TZ = 'Asia/Calcutta'
 
 export function defaultTimezone(): string {
   return APP_DEFAULT_TZ

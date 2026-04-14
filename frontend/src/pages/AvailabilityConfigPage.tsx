@@ -16,7 +16,7 @@ import { conflictingBlockIds, conflictingSlotKeys } from '../conflicts'
 import { blocksFromSlots, slotsFromBlocks } from '../gridUtils'
 import { hasOverlappingBlocks } from '../overlap'
 import { defaultTimezone, listTimezones } from '../timezones'
-import type { AvailabilityProfile, BusyInterval } from '../types'
+import type { AvailabilityBlock, AvailabilityProfile, BusyInterval } from '../types'
 
 type Mode = 'nl' | 'grid' | 'calendar'
 
@@ -186,16 +186,92 @@ export function AvailabilityConfigPage() {
     }
   }
 
-  const removeBlock = (blockId: string) => {
+  /** Convert HH:MM string to minutes since midnight. */
+  const toMins = (t: string) => {
+    if (t === '24:00') return 1440
+    const [h, m] = t.split(':').map(Number)
+    return h * 60 + m
+  }
+  const toHHMM = (mins: number) => {
+    if (mins >= 1440) return '24:00'
+    return `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
+  }
+
+  /**
+   * Instead of deleting an entire block, trim out only the busy slots that
+   * overlap it and keep any remaining time as new blocks.
+   */
+  const trimBlock = (blockId: string) => {
     setKeptConflictAck((prev) => {
       const next = new Set(prev)
       next.delete(blockId)
       return next
     })
-    setDraft((d) => ({
-      ...d,
-      blocks: d.blocks.filter((b) => b.block_id !== blockId),
-    }))
+    setDraft((d) => {
+      const target = d.blocks.find((b) => b.block_id === blockId)
+      if (!target) return d
+
+      // Collect busy ranges (in minutes) that overlap this block on its weekday.
+      const blockStart = toMins(target.start)
+      const blockEnd = toMins(target.end)
+
+      const busyRanges = busy
+        .map((bi) => {
+          // Convert UTC busy interval to local HH:MM for the block's weekday.
+          const bStart = new Date(bi.start)
+          const bEnd = new Date(bi.end)
+          // Use local hours/minutes (the grid already works in local time).
+          const bStartMins = bStart.getHours() * 60 + bStart.getMinutes()
+          const bEndMins = bEnd.getHours() * 60 + bEnd.getMinutes()
+          return { s: bStartMins, e: bEndMins }
+        })
+        .filter(({ s, e }) => s < blockEnd && e > blockStart)
+
+      if (!busyRanges.length) {
+        // No overlap found — fall back to full removal.
+        return { ...d, blocks: d.blocks.filter((b) => b.block_id !== blockId) }
+      }
+
+      // Merge & sort busy ranges, then cut them out of [blockStart, blockEnd].
+      busyRanges.sort((a, b) => a.s - b.s)
+      const merged: { s: number; e: number }[] = []
+      for (const r of busyRanges) {
+        if (merged.length && r.s <= merged[merged.length - 1].e) {
+          merged[merged.length - 1].e = Math.max(merged[merged.length - 1].e, r.e)
+        } else {
+          merged.push({ ...r })
+        }
+      }
+
+      const replacements: AvailabilityBlock[] = []
+      let cursor = blockStart
+      for (const { s, e } of merged) {
+        const clipS = Math.max(s, blockStart)
+        const clipE = Math.min(e, blockEnd)
+        if (cursor < clipS) {
+          replacements.push({
+            ...target,
+            block_id: `${target.block_id}_a${cursor}`,
+            start: toHHMM(cursor),
+            end: toHHMM(clipS),
+          })
+        }
+        cursor = clipE
+      }
+      if (cursor < blockEnd) {
+        replacements.push({
+          ...target,
+          block_id: `${target.block_id}_b${cursor}`,
+          start: toHHMM(cursor),
+          end: toHHMM(blockEnd),
+        })
+      }
+
+      const newBlocks = d.blocks.flatMap((b) =>
+        b.block_id === blockId ? replacements : [b],
+      )
+      return { ...d, blocks: newBlocks }
+    })
   }
 
   const connectGoogle = () => {
@@ -390,7 +466,7 @@ export function AvailabilityConfigPage() {
                       <span>
                         <strong>{b.day}</strong> {b.start}–{b.end}
                       </span>
-                      <button type="button" className="btn" onClick={() => removeBlock(b.block_id)}>
+                      <button type="button" className="btn" onClick={() => trimBlock(b.block_id)}>
                         Remove block
                       </button>
                       {keptConflictAck.has(b.block_id) ? (
