@@ -1,0 +1,437 @@
+:root {
+  color-scheme: light;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --rose-bg: #ffe4e6;
+  --rose-border: #fda4af;
+  --rose-text: #9f1239;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.08);
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background-color: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* Dashboard */
+.dashboard-root {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.parallax-bg {
+  position: absolute;
+  inset: -24px;
+  pointer-events: none;
+  z-index: 0;
+}
+.parallax-plane {
+  position: absolute;
+  border-radius: 24px;
+  opacity: 0.45;
+  filter: blur(0.5px);
+}
+.parallax-plane.p1 {
+  width: 420px;
+  height: 420px;
+  top: 8%;
+  right: 6%;
+  background: radial-gradient(circle at 30% 30%, rgba(13, 148, 136, 0.12), transparent 62%);
+}
+.parallax-plane.p2 {
+  width: 320px;
+  height: 320px;
+  bottom: 12%;
+  left: 4%;
+  background: radial-gradient(circle at 70% 70%, rgba(15, 118, 110, 0.1), transparent 60%);
+}
+.parallax-plane.p3 {
+  width: 260px;
+  height: 260px;
+  top: 42%;
+  left: 38%;
+  background: radial-gradient(circle at 50% 50%, rgba(148, 163, 184, 0.15), transparent 58%);
+}
+
+.dashboard-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dash-side {
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.5rem 1rem;
+}
+.dash-brand {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.dash-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+}
+.dash-nav-item {
+  display: block;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+.dash-nav-item:hover {
+  background: #f1f5f9;
+  transform: translateX(2px);
+}
+
+.dash-main {
+  padding: 1.5rem 2rem 3rem;
+  position: relative;
+}
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+}
+.dash-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.dash-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  max-width: 560px;
+}
+
+/* Popup */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.18);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 20;
+}
+.popup-card {
+  width: min(420px, calc(100vw - 2rem));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-hover);
+  padding: 1.25rem 1.35rem;
+}
+.popup-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.popup-block-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  max-height: 220px;
+  overflow: auto;
+}
+.popup-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+}
+.popup-block:last-child {
+  border-bottom: none;
+}
+.period-chip {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.conflict-badge {
+  font-size: 0.65rem;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  background: var(--rose-bg);
+  color: var(--rose-text);
+  border: 1px solid var(--rose-border);
+  white-space: nowrap;
+}
+.popup-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.875rem;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+  border-color: #cbd5e1;
+}
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Config page */
+.config-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+.config-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.config-head h1 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.tab {
+  border: none;
+  background: transparent;
+  padding: 0.65rem 1.1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.tab:hover {
+  color: var(--text);
+}
+.tab.active {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+.nl-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+.nl-row textarea {
+  flex: 1;
+  min-height: 100px;
+  resize: vertical;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+}
+.nl-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.warnings {
+  color: var(--rose-text);
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.weekly-grid-wrap {
+  margin-top: 0.5rem;
+}
+.weekly-grid-meta {
+  margin-bottom: 0.35rem;
+}
+.weekly-grid-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+.weekly-grid {
+  border-collapse: collapse;
+  font-size: 0.7rem;
+  min-width: 1000px;
+}
+.wg-corner {
+  width: 44px;
+  border-bottom: 1px solid var(--border);
+}
+/* One label per clock hour, centered over the :00 and :30 half-hour columns (colSpan=2). */
+.wg-hour {
+  text-align: center;
+  padding: 0.3rem 0.15rem;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.68rem;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.wg-offpeak {
+  background: #f8fafc;
+}
+.wg-day {
+  text-align: left;
+  padding: 0.15rem 0.5rem;
+  font-weight: 600;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+}
+.wg-cell-wrap {
+  padding: 0;
+  border-right: 1px solid #f1f5f9;
+}
+/* Stronger line at each new hour (between :30 and next :00 column). */
+.wg-cell-wrap.wg-hour-start {
+  border-left: 1px solid #cbd5e1;
+}
+.wg-cell {
+  width: 100%;
+  min-width: 12px;
+  height: 22px;
+  border: none;
+  padding: 0;
+  background: #fff;
+  transition: background 0.12s ease;
+}
+.wg-cell:hover:not(:disabled) {
+  background: #ecfeff;
+}
+.wg-cell.on {
+  background: rgba(13, 148, 136, 0.35);
+}
+.wg-cell.on:hover:not(:disabled) {
+  background: rgba(13, 148, 136, 0.5);
+}
+.wg-cell.conflict.on {
+  box-shadow: inset 0 0 0 1px var(--rose-border);
+  background: rgba(254, 205, 211, 0.45);
+}
+.wg-cell.readonly {
+  cursor: default;
+}
+
+.config-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+select.tz-select {
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
